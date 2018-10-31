@@ -75,12 +75,6 @@ for dir_name in file_directories:
                     print('Error reading line: ' + line)
                     reading_error_count += 1
 
-
-data = pd.read_csv('./' + destination_csv_name,
-                   names=['Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count', 'Gap', 'Antenna'], low_memory=False)
-print(data.sample(n=10))
-
-
 print('Complete.')
 print('Processed %s records.' % records)
 print('Error reading %s records' % reading_error_count)
