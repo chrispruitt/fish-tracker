@@ -7,10 +7,10 @@ from datetime import datetime, time, timedelta
 #       that need to be process.
 data_directory = './antenna_data/'
 file_directories = [
-    'Downstream',
-    'Upstream 1',
-    'Upstream 2',
-    'Upstream 3'
+    'D1',
+    'U1',
+    'U2',
+    'U3'
 ]
 
 UPSTREAM_1_LAT = 33.99697222
@@ -42,14 +42,13 @@ for dir_name in file_directories:
     for file in files_to_import:
         print('Importing Records from %s... ' % file)
 
-        tower_id = dir_name
-        with open(file_path + '/' + file) as f:
+        antenna = dir_name
+        with open(file_path + '/' + file, errors='ignore') as f:
             with open(destination_csv_name, "a", newline='') as temp_file:
                 try:
                     for line in f:
                         if line is not None and line[0:2] == 'D ':
                             row = line.split()
-                            row.append(tower_id)
                             try:
                                 # check each column for validation
                                 datetime.strptime(row[1], '%Y-%m-%d')
@@ -57,7 +56,11 @@ for dir_name in file_directories:
                                 pd.to_timedelta(row[3])
                                 float(row[6])
 
+                                if len(row) != 8:
+                                    raise ValueError('Row should have 8 columns.')
+
                                 if row[5][0:3] == '3D6':
+                                    row.append(antenna)
                                     writer = csv.writer(temp_file, delimiter=',')
                                     writer.writerow(row)
                                     records += 1
@@ -74,7 +77,7 @@ for dir_name in file_directories:
 
 
 data = pd.read_csv('./' + destination_csv_name,
-                   names=['Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count', 'Gap', 'Antenna'])
+                   names=['Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count', 'Gap', 'Antenna'], low_memory=False)
 print(data.sample(n=10))
 
 
