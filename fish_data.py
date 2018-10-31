@@ -83,6 +83,8 @@ for dir_name in file_directories:
                     print('Error reading line: ' + line)
                     reading_error_count += 1
 
+<<<<<<< HEAD
+=======
 
 data = pd.read_csv('./' + destination_csv_name,
                    names=['Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count', 'Gap', 'Antenna', 'Species'], low_memory=False)
@@ -94,6 +96,7 @@ data.to_csv('./' + destination_csv_name, sep=',', index=False, header=False)
 
 print(data.sample(n=10))
 
+>>>>>>> 415b1c8a22bf0f4854b6dcca508e87d9f51bc84f
 print('Complete.')
 print('Processed %s records.' % records)
 print('Wrote %s records after deduplication.' % len(data.index))
