@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 import csv
-from datetime import datetime, time, timedelta
+from datetime import datetime
 
 # scource_data_directory_path is the location of the directory holding all of the files
 #       that need to be process.
@@ -13,14 +13,14 @@ file_directories = [
     'U3'
 ]
 
-UPSTREAM_1_LAT = 33.99697222
-UPSTREAM_1_LONG = -84.89694444
-UPSTREAM_2_LAT = 33.99700000
-UPSTREAM_2_LONG = -84.89805556
-UPSTREAM_3_LAT = 33.99644444
-UPSTREAM_3_LONG = -84.89944444
-DOWNSTREAM_LAT = 33.99852778
-DOWNSTREAM_LONG = -84.89444444
+# UPSTREAM_1_LAT = 33.99697222
+# UPSTREAM_1_LONG = -84.89694444
+# UPSTREAM_2_LAT = 33.99700000
+# UPSTREAM_2_LONG = -84.89805556
+# UPSTREAM_3_LAT = 33.99644444
+# UPSTREAM_3_LONG = -84.89944444
+# DOWNSTREAM_LAT = 33.99852778
+# DOWNSTREAM_LONG = -84.89444444
 
 # destination_csv_name is the file name that the processed data will be appended to, if it exists.
 #       each subsequent run of this script will append everything in the source_data_directory_path to the
@@ -52,7 +52,9 @@ for dir_name in file_directories:
                             try:
                                 # check each column for validation
                                 datetime.strptime(row[1], '%Y-%m-%d')
-                                pd.to_timedelta(row[2])
+
+                                #Round tag_time to nearest hour
+                                row[2] = str(pd.to_timedelta(row[2]).round('H'))[7:]
                                 pd.to_timedelta(row[3])
                                 float(row[6])
 
@@ -75,7 +77,22 @@ for dir_name in file_directories:
                     print('Error reading line: ' + line)
                     reading_error_count += 1
 
+<<<<<<< HEAD
+=======
+
+data = pd.read_csv('./' + destination_csv_name,
+                   names=['Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count', 'Gap', 'Antenna'], low_memory=False)
+
+# Deduplicate by hour
+data = data.drop_duplicates(subset=['Tag ID', 'Date', 'Time'])
+data.to_csv('./' + destination_csv_name, sep=',', index=False, header=False)
+
+
+print(data.sample(n=10))
+
+>>>>>>> 415b1c8a22bf0f4854b6dcca508e87d9f51bc84f
 print('Complete.')
 print('Processed %s records.' % records)
+print('Wrote %s records after deduplication.' % len(data.index))
 print('Error reading %s records' % reading_error_count)
 print('Error processing %s records' % processing_error_count)
