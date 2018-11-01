@@ -44,7 +44,7 @@ for dir_name in file_directories:
 
         antenna = dir_name
         with open(file_path + '/' + file, errors='ignore') as f:
-            with open(destination_csv_name, "a", newline='') as temp_file:
+            with open(destination_csv_name, "w", newline='') as temp_file:
                 try:
                     for line in f:
                         if line is not None and line[0:2] == 'D ':
@@ -77,22 +77,19 @@ for dir_name in file_directories:
                     print('Error reading line: ' + line)
                     reading_error_count += 1
 
-<<<<<<< HEAD
-=======
 
-data = pd.read_csv('./' + destination_csv_name,
-                   names=['Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count', 'Gap', 'Antenna'], low_memory=False)
+data = pd.read_csv('./processed_data.csv', 
+    names=['D','Date','Time','Duration','Type','Tag ID','Count','Gap','Antenna'], low_memory=False)
 
-# Deduplicate by hour
-data = data.drop_duplicates(subset=['Tag ID', 'Date', 'Time'])
-data.to_csv('./' + destination_csv_name, sep=',', index=False, header=False)
+data = data.fillna(value=0)
+data['Hour'] = data['Time'].str[:2]
+data = data.drop_duplicates(subset=['Tag ID', 'Date', 'Hour', 'Antenna'])
+data = data.drop('Hour', 1)
 
+data.to_csv('./processed_data.csv', header=names)
 
-print(data.sample(n=10))
-
->>>>>>> 415b1c8a22bf0f4854b6dcca508e87d9f51bc84f
 print('Complete.')
 print('Processed %s records.' % records)
-print('Wrote %s records after deduplication.' % len(data.index))
+# print('Wrote %s records after deduplication.' % len(data.index))
 print('Error reading %s records' % reading_error_count)
 print('Error processing %s records' % processing_error_count)
