@@ -31,6 +31,9 @@ processing_error_count = 0
 reading_error_count = 0
 records = 0
 
+# tag_data = data = pd.read_csv('./tag_data.csv',
+#                               names=['Date', 'Time', 'Tag ID', 'Species', 'Length', 'Capture Method ', 'Marked At'], low_memory=False)
+
 # Remove processed data file if it exists
 if os.path.exists(destination_csv_name):
     os.remove(destination_csv_name)
@@ -58,11 +61,14 @@ for dir_name in file_directories:
                                 pd.to_timedelta(row[3])
                                 float(row[6])
 
+                                # species = tag_data.loc[tag_data['Tag ID'] == '3D6.00184CB8BF']['Species'].values[0]
+
                                 if len(row) != 8:
                                     raise ValueError('Row should have 8 columns.')
 
                                 if row[5][0:3] == '3D6':
                                     row.append(antenna)
+                                    # row.append(species)
                                     writer = csv.writer(temp_file, delimiter=',')
                                     writer.writerow(row)
                                     records += 1
@@ -77,16 +83,16 @@ for dir_name in file_directories:
                     print('Error reading line: ' + line)
                     reading_error_count += 1
 
-
-data = pd.read_csv('./processed_data.csv', 
-    names=['D','Date','Time','Duration','Type','Tag ID','Count','Gap','Antenna'], low_memory=False)
+data = pd.read_csv('./' + destination_csv_name,
+                   names=['D', 'Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count', 'Gap', 'Antenna'], low_memory=False)
 
 data = data.fillna(value=0)
-data['Hour'] = data['Time'].str[:2]
+# Deduplicate by hour
 data = data.drop_duplicates(subset=['Tag ID', 'Date', 'Hour', 'Antenna'])
-data = data.drop('Hour', 1)
-
+# data.to_csv('./' + destination_csv_name, sep=',', index=False, header=False)
 data.to_csv('./processed_data.csv', header=['D','Date','Time','Duration','Type','Tag ID','Count','Gap','Antenna'])
+
+print(data.sample(n=10))
 
 print('Complete.')
 print('Processed %s records.' % records)
