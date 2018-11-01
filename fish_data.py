@@ -86,10 +86,10 @@ data['Hour'] = data['Time'].str[:2]
 data = data.drop_duplicates(subset=['Tag ID', 'Date', 'Hour', 'Antenna'])
 data = data.drop('Hour', 1)
 
-data.to_csv('./processed_data.csv', header=names)
+data.to_csv('./processed_data.csv', header=['D','Date','Time','Duration','Type','Tag ID','Count','Gap','Antenna'])
 
 print('Complete.')
 print('Processed %s records.' % records)
-# print('Wrote %s records after deduplication.' % len(data.index))
+print('Wrote %s records after deduplication.' % len(data.index))
 print('Error reading %s records' % reading_error_count)
 print('Error processing %s records' % processing_error_count)
