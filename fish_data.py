@@ -47,7 +47,7 @@ for dir_name in file_directories:
 
         antenna = dir_name
         with open(file_path + '/' + file, errors='ignore') as f:
-            with open(destination_csv_name, "a", newline='') as temp_file:
+            with open(destination_csv_name, "w", newline='') as temp_file:
                 try:
                     for line in f:
                         if line is not None and line[0:2] == 'D ':
@@ -85,12 +85,14 @@ for dir_name in file_directories:
 
 data = pd.read_csv('./' + destination_csv_name,
                    names=['D', 'Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count', 'Gap', 'Antenna'], low_memory=False)
+
+data = data.fillna(value=0)
 # Deduplicate by hour
-data = data.drop_duplicates(subset=['Tag ID', 'Date', 'Time'])
-data.to_csv('./' + destination_csv_name, sep=',', index=False, header=False)
+data = data.drop_duplicates(subset=['Tag ID', 'Date', 'Hour', 'Antenna'])
+# data.to_csv('./' + destination_csv_name, sep=',', index=False, header=False)
+data.to_csv('./processed_data.csv', header=['D','Date','Time','Duration','Type','Tag ID','Count','Gap','Antenna'])
 
 print(data.sample(n=10))
-
 
 print('Complete.')
 print('Processed %s records.' % records)
