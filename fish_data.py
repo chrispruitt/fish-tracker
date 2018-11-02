@@ -103,7 +103,7 @@ fish_tag_data = pd.read_csv('./tag_data.csv',
                             low_memory=False)
 
 # Join Dataframe on Tag ID
-fish_data = pd.merge(fish_data, fish_tag_data[['Tag ID', 'Species', 'Length', 'Marked At']], on='Tag ID', how='left')
+fish_data = pd.merge(fish_data, fish_tag_data[['Tag ID', 'Species', 'Length', 'Marked At']], on='Tag ID')
 
 fish_data = fish_data.fillna(value=0)
 
