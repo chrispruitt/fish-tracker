@@ -107,6 +107,9 @@ fish_data = pd.merge(fish_data, fish_tag_data[['Tag ID', 'Species', 'Length', 'M
 
 fish_data = fish_data.fillna(value=0)
 
+print('Sorting data by date and time')
+fish_data = fish_data.sort_values(['Date', 'Time'])
+
 print('Writing to csv...\n')
 fish_data.to_csv('./processed_data.csv',
                  header=['D', 'Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count', 'Gap', 'Antenna', 'Lat', 'Long', 'Species', 'Length', 'Marked At'],
