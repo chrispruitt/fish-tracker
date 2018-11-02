@@ -15,14 +15,14 @@ file_directories = [
     'U3'
 ]
 
-U1_LAT = 33.99644444
-U1_LONG = -84.89666667
-U2_LAT = 33.99697222
-U2_LONG = -84.89694444
-U3_LAT = 33.99700000
-U3_LONG = -84.89805556
-D1_LAT = 33.99852778
-D1_LONG = -84.89444444
+U1_LAT = 33.996972
+U1_LONG = -84.896806
+U2_LAT = 33.997
+U2_LONG = -84.898167
+U3_LAT = 33.996417
+U3_LONG = -84.8995
+D1_LAT = 33.998528
+D1_LONG = -84.894528
 
 # destination_csv_name is the file name that the processed data will be appended to, if it exists.
 #       each subsequent run of this script will append everything in the source_data_directory_path to the
