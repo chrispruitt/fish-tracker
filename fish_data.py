@@ -105,14 +105,30 @@ fish_tag_data = pd.read_csv('./tag_data.csv',
 # Join Dataframe on Tag ID
 fish_data = pd.merge(fish_data, fish_tag_data[['Tag ID', 'Species', 'Length', 'Marked At']], on='Tag ID')
 
+# Convert 'Date' to datetime type and derive the Week Number as 'Week'
+fish_data['Date'] = fish_data['Date'].astype('datetime64[ns]')
+fish_data['Week'] = fish_data['Date'].dt.week
+
+# Was the tagged fish present at the indicated antenna 0/No, 1/Yes
+fish_data['D1'] = fish_data['Antenna'].isin(['D1'])
+fish_data['U1'] = fish_data['Antenna'].isin(['U1'])
+fish_data['U2'] = fish_data['Antenna'].isin(['U2'])
+fish_data['U3'] = fish_data['Antenna'].isin(['U3'])
+fish_data.D1 = fish_data.D1.astype(int)
+fish_data.U1 = fish_data.U1.astype(int)
+fish_data.U2 = fish_data.U2.astype(int)
+fish_data.U3 = fish_data.U3.astype(int)
+
+# Fill all missing values in DataFrame with zero
 fish_data = fish_data.fillna(value=0)
 
 print('Sorting data by date and time')
 fish_data = fish_data.sort_values(['Date', 'Time'])
 
 print('Writing to csv...\n')
-fish_data.to_csv('./processed_data.csv',
-                 header=['D', 'Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count', 'Gap', 'Antenna', 'Lat', 'Long', 'Species', 'Length', 'Marked At'],
+fish_data.to_csv('./processed_data.csv', header=['D', 'Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count',
+                 'Gap', 'Antenna', 'Lat', 'Long', 'Species', 'Length', 'Marked At', 'Week',
+                 'D1', 'U1', 'U2', 'U3'],
                  index=False)
 
 print(fish_data.sample(n=10))
