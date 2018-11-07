@@ -126,11 +126,12 @@ print('Sorting data by date and time')
 fish_data = fish_data.sort_values(['Date', 'Time'])
 
 print('Writing to csv...\n')
-fish_data.to_csv('./processed_data.csv',
-                 header=['D', 'Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count',
+fish_data.to_csv('./processed_data.csv', header=['D', 'Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count',
                  'Gap', 'Antenna', 'Lat', 'Long', 'Species', 'Length', 'Marked At', 'Week',
                  'D1', 'U1', 'U2', 'U3'],
                  index=False)
+
+print(fish_data.sample(n=10))
 
 end = datetime.now()
 duration = end - start
