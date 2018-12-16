@@ -34,6 +34,31 @@ reading_error_count = 0
 records = 0
 fish_list = []
 
+
+time_rounding_list = [pd.to_timedelta('03:00:00'), pd.to_timedelta('09:00:00'), pd.to_timedelta('15:00:00'), pd.to_timedelta('21:00:00')]
+
+
+def round_to_nearest_time_in_list(time, time_list):
+
+    min_timedelta = time_diff(time, time_list[0])
+    rounded_time = time_list[0]
+
+    for x in time_list:
+        delta = time_diff(time, x)
+        if delta <= min_timedelta:
+            min_timedelta = delta
+            rounded_time = x
+    return rounded_time
+
+
+def time_diff(x, y):
+    if x > y:
+        return x - y
+    else:
+        return y - x
+
+
+
 # Remove processed data file if it exists
 if os.path.exists(destination_csv_name):
     os.remove(destination_csv_name)
@@ -56,8 +81,9 @@ for dir_name in file_directories:
                                 # check each column for validation
                                 datetime.strptime(row[1], '%Y-%m-%d')
 
-                                # Round tag_time to nearest hour
-                                row[2] = str(pd.to_timedelta(row[2]).round('H'))[7:]
+                                # Round tag_time to nearest time in list
+                                time_of_day = str(pd.to_timedelta(row[2]).round('H'))
+                                row[2] = str(round_to_nearest_time_in_list(pd.to_timedelta(time_of_day), time_rounding_list))[7:]
                                 pd.to_timedelta(row[3])
                                 float(row[6])
 

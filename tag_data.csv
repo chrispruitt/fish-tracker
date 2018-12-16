@@ -1,5 +1,5 @@
 Table 1
-Date ,Time,Tag ID,Speceis,Length,Capture Method ,Marked At,
+Date ,Time,Tag ID,Species,Length,Capture Method ,Marked At,
 7/14/17,11:00 AM,3D6.00184CE0C9,HYET,98,Fyke ,D1.0,
 7/14/17,10:04 AM,3D6.00184CE0BF,CAOL,141,Fyke ,D1.0,
 7/14/17,10:04 AM,3D6.00184CE0F1,MODU,141,Fyke ,D1.0,
@@ -608,4 +608,3 @@ Date ,Time,Tag ID,Speceis,Length,Capture Method ,Marked At,
 7/31/18,1:19 PM,3D6.00184CBA82,LEAU,89,Electro,U3.0,
 7/31/18,1:20 PM,3D6.00184CBA94,LEAU,86,Electro,U3.0,
 7/31/18,1:20 PM,3D6.00184CBA5E,LEAU,104,Electro,U3.0,
-,,,,,,,
