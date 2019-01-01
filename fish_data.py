@@ -7,13 +7,11 @@ start = datetime.now()
 
 # scource_data_directory_path is the location of the directory holding all of the files
 #       that need to be process.
-data_directory = './antenna_data/'
-file_directories = [
-    'D1',
-    'U1',
-    'U2',
-    'U3'
-]
+data_directory = './data/antenna_data/'
+# data_directory = './data/test_data/'
+tag_data_path = './data/tag_data.csv'
+
+file_directories = [name for name in os.listdir(data_directory) if os.path.isdir(os.path.join(data_directory, name))]
 
 U1_LAT = 33.996972
 U1_LONG = -84.896806
@@ -35,7 +33,39 @@ records = 0
 fish_list = []
 
 
-time_rounding_list = [pd.to_timedelta('03:00:00'), pd.to_timedelta('09:00:00'), pd.to_timedelta('15:00:00'), pd.to_timedelta('21:00:00')]
+# 6 hour intervals
+# time_rounding_list = [
+#     pd.to_timedelta('03:00:00'),
+#     pd.to_timedelta('09:00:00'),
+#     pd.to_timedelta('15:00:00'),
+#     pd.to_timedelta('21:00:00')
+# ]
+time_rounding_list = [
+    pd.to_timedelta('01:00:00'),
+    pd.to_timedelta('02:00:00'),
+    pd.to_timedelta('03:00:00'),
+    pd.to_timedelta('04:00:00'),
+    pd.to_timedelta('05:00:00'),
+    pd.to_timedelta('06:00:00'),
+    pd.to_timedelta('07:00:00'),
+    pd.to_timedelta('08:00:00'),
+    pd.to_timedelta('09:00:00'),
+    pd.to_timedelta('10:00:00'),
+    pd.to_timedelta('11:00:00'),
+    pd.to_timedelta('12:00:00'),
+    pd.to_timedelta('13:00:00'),
+    pd.to_timedelta('14:00:00'),
+    pd.to_timedelta('15:00:00'),
+    pd.to_timedelta('16:00:00'),
+    pd.to_timedelta('17:00:00'),
+    pd.to_timedelta('18:00:00'),
+    pd.to_timedelta('19:00:00'),
+    pd.to_timedelta('20:00:00'),
+    pd.to_timedelta('21:00:00'),
+    pd.to_timedelta('22:00:00'),
+    pd.to_timedelta('23:00:00'),
+    pd.to_timedelta('24:00:00')
+]
 
 
 def round_to_nearest_time_in_list(time, time_list):
@@ -56,7 +86,6 @@ def time_diff(x, y):
         return x - y
     else:
         return y - x
-
 
 
 # Remove processed data file if it exists
@@ -124,7 +153,7 @@ fish_data.loc[fish_data.Antenna == 'D1', 'Long'] = D1_LONG
 
 print('Merging species data...')
 # Load fish tag data into a dataframe
-fish_tag_data = pd.read_csv('./tag_data.csv',
+fish_tag_data = pd.read_csv(tag_data_path,
                             names=['Date', 'Time', 'Tag ID', 'Species', 'Length', 'Capture Method', 'Marked At'],
                             low_memory=False)
 
