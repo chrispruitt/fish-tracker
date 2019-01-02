@@ -31,7 +31,6 @@ def update_current_location(loc_pd, tag_id, antenna, date, time):
     loc_pd.loc[loc_pd['tag_id'] == tag_id, 'time'] = time
 
 
-
 def main():
 
     if os.path.exists(destination_csv_name):

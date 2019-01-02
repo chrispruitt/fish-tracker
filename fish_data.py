@@ -34,38 +34,38 @@ fish_list = []
 
 
 # 6 hour intervals
-# time_rounding_list = [
-#     pd.to_timedelta('03:00:00'),
-#     pd.to_timedelta('09:00:00'),
-#     pd.to_timedelta('15:00:00'),
-#     pd.to_timedelta('21:00:00')
-# ]
 time_rounding_list = [
-    pd.to_timedelta('01:00:00'),
-    pd.to_timedelta('02:00:00'),
     pd.to_timedelta('03:00:00'),
-    pd.to_timedelta('04:00:00'),
-    pd.to_timedelta('05:00:00'),
-    pd.to_timedelta('06:00:00'),
-    pd.to_timedelta('07:00:00'),
-    pd.to_timedelta('08:00:00'),
     pd.to_timedelta('09:00:00'),
-    pd.to_timedelta('10:00:00'),
-    pd.to_timedelta('11:00:00'),
-    pd.to_timedelta('12:00:00'),
-    pd.to_timedelta('13:00:00'),
-    pd.to_timedelta('14:00:00'),
     pd.to_timedelta('15:00:00'),
-    pd.to_timedelta('16:00:00'),
-    pd.to_timedelta('17:00:00'),
-    pd.to_timedelta('18:00:00'),
-    pd.to_timedelta('19:00:00'),
-    pd.to_timedelta('20:00:00'),
-    pd.to_timedelta('21:00:00'),
-    pd.to_timedelta('22:00:00'),
-    pd.to_timedelta('23:00:00'),
-    pd.to_timedelta('24:00:00')
+    pd.to_timedelta('21:00:00')
 ]
+# time_rounding_list = [
+#     pd.to_timedelta('01:00:00'),
+#     pd.to_timedelta('02:00:00'),
+#     pd.to_timedelta('03:00:00'),
+#     pd.to_timedelta('04:00:00'),
+#     pd.to_timedelta('05:00:00'),
+#     pd.to_timedelta('06:00:00'),
+#     pd.to_timedelta('07:00:00'),
+#     pd.to_timedelta('08:00:00'),
+#     pd.to_timedelta('09:00:00'),
+#     pd.to_timedelta('10:00:00'),
+#     pd.to_timedelta('11:00:00'),
+#     pd.to_timedelta('12:00:00'),
+#     pd.to_timedelta('13:00:00'),
+#     pd.to_timedelta('14:00:00'),
+#     pd.to_timedelta('15:00:00'),
+#     pd.to_timedelta('16:00:00'),
+#     pd.to_timedelta('17:00:00'),
+#     pd.to_timedelta('18:00:00'),
+#     pd.to_timedelta('19:00:00'),
+#     pd.to_timedelta('20:00:00'),
+#     pd.to_timedelta('21:00:00'),
+#     pd.to_timedelta('22:00:00'),
+#     pd.to_timedelta('23:00:00'),
+#     pd.to_timedelta('24:00:00')
+# ]
 
 
 def round_to_nearest_time_in_list(time, time_list):
