@@ -1,20 +1,9 @@
 import pandas as pd
 import os
-from datetime import datetime, timedelta
 
-
-tag_data_path = './data/tag_data.csv'
+tag_data_path = './clean_master_list.csv'
 processed_data_path = './processed_data.csv'
 destination_csv_name = './migrations.csv'
-
-
-def read_time_to_timedelta(timeString):
-    time = timeString.split(':')
-    hours = int(time[0])
-    minutes = int(time[1].split()[0])
-    if time[1].split()[1] == 'PM' and hours != 12:
-        hours += 12
-    return timedelta(hours=hours, minutes=minutes)
 
 
 def get_location(loc_pd, tag_id):
@@ -54,9 +43,9 @@ def main():
         try:
             master_fish_array.append({
                 'tag_id': row[2],
-                'antenna': str(row[6])[:2],
-                'date': datetime.strptime(row[0], '%m/%d/%Y').strftime('%Y-%m-%d'),
-                'time': str(read_time_to_timedelta(row[1]))
+                'antenna': row[6],
+                'date': row[0],
+                'time': row[1]
             })
 
         except Exception as e:
@@ -91,9 +80,7 @@ def main():
 
                     migrations_df = migrations_df.append(dict, ignore_index=True)
 
-                # print(loc_pd.loc[loc_pd['tag_id'] == tag_id].to_dict(orient='records'))
                 update_current_location(loc_pd, tag_id, antenna, date, time)
-                # print(loc_pd.loc[loc_pd['tag_id'] == tag_id].to_dict(orient='records'))
 
             else:
                 print('Tag with id: %s does not exist in master list.' % tag_id)
