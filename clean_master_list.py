@@ -1,11 +1,21 @@
 import pandas as pd
 import os
 from datetime import datetime, timedelta
+###########################################################################################
+"""
+Description:
+This Script is used to cleanse the data from the master tag list
+"""
 
+# PARAMETERS:
 
+# PATHS:
 tag_data_path = './data/tag_data.csv'
-destination_csv_name = './results/cleaned_master_list.csv'
+destination_csv_name = './results/cleansed_master_list.csv'
 
+###########################################################################################
+
+start_timer = datetime.now()
 column_names = ['Date', 'Time', 'Tag ID', 'Species', 'Length', 'Capture Method', 'Marked At']
 
 
@@ -59,3 +69,8 @@ def main():
 
 
 main()
+
+end_timer = datetime.now()
+duration = end_timer - start_timer
+duration = divmod(duration.total_seconds(), 60)
+print('\nCompleted in %d mins and %d seconds.' % (int(round(duration[0])), int(round(duration[1]))))

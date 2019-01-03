@@ -1,9 +1,20 @@
 import pandas as pd
 import os
+from datetime import datetime
+###########################################################################################
+"""
+Description:
+This Script is used to record every migration a tag has given a data set.
+"""
 
+# PARAMETERS:
 tag_data_path = './results/cleansed_master_list.csv'
 processed_data_path = './results/cleansed_detection_data.csv'
 destination_csv_name = './results/migrations.csv'
+
+###########################################################################################
+
+start_timer = datetime.now()
 
 
 def get_location(loc_pd, tag_id):
@@ -30,7 +41,7 @@ def main():
                                  low_memory=False)
 
     detection_df = pd.read_csv(processed_data_path,
-                               names=['D', 'Date', 'Time', 'Tag ID', 'Antenna', 'Lat', 'Long', 'Species', 'Length', 'Marked At'],
+                               names=['D', 'Date', 'Time', 'Tag ID', 'Antenna', 'Species', 'Length', 'Marked At'],
                                low_memory=False)
 
     master_fish_array = []
@@ -95,3 +106,9 @@ def main():
 
 
 main()
+
+
+end_timer = datetime.now()
+duration = end_timer - start_timer
+duration = divmod(duration.total_seconds(), 60)
+print('\nCompleted in %d mins and %d seconds.' % (int(round(duration[0])), int(round(duration[1]))))

@@ -1,19 +1,26 @@
-# parameters (start_datetime, end_datetime, interval(in hours))
-
 import pandas as pd, csv
 from datetime import datetime, timedelta
+
+###########################################################################################
+"""
+Description:
+This Script is used to cleanse the data from the master tag list.
+"""
 
 # PARAMETERS
 start_datetime = datetime(year=2018, month=7, day=3, hour=3)
 end_datetime = datetime(year=2018, month=9, day=24, hour=23, minute=59)
 interval_hours = 6
 
-start = datetime.now()
-
-optimal_dates_path = './data/optimal_dates.csv'
-tag_data_path = './results/cleaned_master_list.csv'
+# PATHS:
+optimal_dates_path = './data/optimal_dates.csv'  # only the dates in this file will be used to record data. all other dates will be skipped.
+tag_data_path = './results/cleansed_master_list.csv'
 processed_data_path = './results/cleansed_detection_data.csv'
 destination_csv_name = './results/mark.txt'
+
+###########################################################################################
+
+start_timer = datetime.now()
 
 
 def main():
@@ -27,7 +34,7 @@ def main():
                                  low_memory=False)
 
     detection_df = pd.read_csv(processed_data_path,
-                               names=['D', 'Date', 'Time', 'Tag ID', 'Antenna', 'Lat', 'Long', 'Species', 'Length', 'Marked At'],
+                               names=['D', 'Date', 'Time', 'Tag ID', 'Antenna', 'Species', 'Length', 'Marked At'],
                                low_memory=False)
 
     # TODO: mark first encounter when captured
@@ -97,8 +104,7 @@ def main():
 
 main()
 
-end = datetime.now()
-duration = end - start
+end_timer = datetime.now()
+duration = end_timer - start_timer
 duration = divmod(duration.total_seconds(), 60)
-
 print('\nCompleted in %d mins and %d seconds.' % (int(round(duration[0])), int(round(duration[1]))))
