@@ -4,9 +4,10 @@ from datetime import datetime, timedelta
 
 
 tag_data_path = './data/tag_data.csv'
-destination_csv_name = './clean_master_list.csv'
+destination_csv_name = './results/cleaned_master_list.csv'
 
 column_names = ['Date', 'Time', 'Tag ID', 'Species', 'Length', 'Capture Method', 'Marked At']
+
 
 def read_time_to_timedelta(time_string):
     time = time_string.split(':')

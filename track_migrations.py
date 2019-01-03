@@ -1,9 +1,9 @@
 import pandas as pd
 import os
 
-tag_data_path = './clean_master_list.csv'
-processed_data_path = './processed_data.csv'
-destination_csv_name = './migrations.csv'
+tag_data_path = './results/cleansed_master_list.csv'
+processed_data_path = './results/cleansed_detection_data.csv'
+destination_csv_name = './results/migrations.csv'
 
 
 def get_location(loc_pd, tag_id):
@@ -30,16 +30,12 @@ def main():
                                  low_memory=False)
 
     detection_df = pd.read_csv(processed_data_path,
-                                 names=['D', 'Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count',
-                                               'Gap', 'Antenna', 'Lat', 'Long', 'Species', 'Length', 'Marked At', 'Week',
-                                               'D1', 'U1', 'U2', 'U3'],
-                                 low_memory=False)
+                               names=['D', 'Date', 'Time', 'Tag ID', 'Antenna', 'Lat', 'Long', 'Species', 'Length', 'Marked At'],
+                               low_memory=False)
 
     master_fish_array = []
     ignored_rows = 0
     for index, row in master_list_df.iterrows():
-        # create current location dict for each tagged fish
-
         try:
             master_fish_array.append({
                 'tag_id': row[2],

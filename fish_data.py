@@ -1,38 +1,22 @@
 import pandas as pd
 import os
-import csv
 from datetime import datetime
 
 start = datetime.now()
 
-# scource_data_directory_path is the location of the directory holding all of the files
-#       that need to be process.
 data_directory = './data/antenna_data/'
 # data_directory = './data/test_data/'
 tag_data_path = './data/tag_data.csv'
+destination_csv_name = './results/cleansed_detection_data.csv'
 
 file_directories = [name for name in os.listdir(data_directory) if os.path.isdir(os.path.join(data_directory, name))]
-
-U1_LAT = 33.996972
-U1_LONG = -84.896806
-U2_LAT = 33.997
-U2_LONG = -84.898167
-U3_LAT = 33.996417
-U3_LONG = -84.8995
-D1_LAT = 33.998528
-D1_LONG = -84.894528
-
-# destination_csv_name is the file name that the processed data will be appended to, if it exists.
-#       each subsequent run of this script will append everything in the source_data_directory_path to the
-#           destination_csv_name file.
-destination_csv_name = 'processed_data.csv'
 
 processing_error_count = 0
 reading_error_count = 0
 records = 0
 fish_list = []
 
-
+# PARAMETERS:
 # 6 hour intervals
 time_rounding_list = [
     pd.to_timedelta('03:00:00'),
@@ -141,16 +125,6 @@ print('\nDeduplicating records...')
 # Deduplicate by hour
 fish_data = fish_data.drop_duplicates(subset=['Tag ID', 'Date', 'Time', 'Antenna'])
 
-print('Appending location data...')
-fish_data.loc[fish_data.Antenna == 'U1', 'Lat'] = U1_LAT
-fish_data.loc[fish_data.Antenna == 'U1', 'Long'] = U1_LONG
-fish_data.loc[fish_data.Antenna == 'U2', 'Lat'] = U2_LAT
-fish_data.loc[fish_data.Antenna == 'U2', 'Long'] = U2_LONG
-fish_data.loc[fish_data.Antenna == 'U3', 'Lat'] = U3_LAT
-fish_data.loc[fish_data.Antenna == 'U3', 'Long'] = U3_LONG
-fish_data.loc[fish_data.Antenna == 'D1', 'Lat'] = D1_LAT
-fish_data.loc[fish_data.Antenna == 'D1', 'Long'] = D1_LONG
-
 print('Merging species data...')
 # Load fish tag data into a dataframe
 fish_tag_data = pd.read_csv(tag_data_path,
@@ -160,30 +134,16 @@ fish_tag_data = pd.read_csv(tag_data_path,
 # Join Dataframe on Tag ID
 fish_data = pd.merge(fish_data, fish_tag_data[['Tag ID', 'Species', 'Length', 'Marked At']], on='Tag ID')
 
-# Convert 'Date' to datetime type and derive the Week Number as 'Week'
-fish_data['Date'] = fish_data['Date'].astype('datetime64[ns]')
-fish_data['Week'] = fish_data['Date'].dt.week
-
-# Was the tagged fish present at the indicated antenna 0/No, 1/Yes
-fish_data['D1'] = fish_data['Antenna'].isin(['D1'])
-fish_data['U1'] = fish_data['Antenna'].isin(['U1'])
-fish_data['U2'] = fish_data['Antenna'].isin(['U2'])
-fish_data['U3'] = fish_data['Antenna'].isin(['U3'])
-fish_data.D1 = fish_data.D1.astype(int)
-fish_data.U1 = fish_data.U1.astype(int)
-fish_data.U2 = fish_data.U2.astype(int)
-fish_data.U3 = fish_data.U3.astype(int)
-
 # Fill all missing values in DataFrame with zero
 fish_data = fish_data.fillna(value=0)
 
 print('Sorting data by date and time')
 fish_data = fish_data.sort_values(['Date', 'Time'])
 
+
+fish_data = fish_data.drop(axis='columns', columns=['Duration', 'Type', 'Gap', 'Count'])
 print('Writing to csv...\n')
-fish_data.to_csv('./processed_data.csv', header=['D', 'Date', 'Time', 'Duration', 'Type', 'Tag ID', 'Count',
-                 'Gap', 'Antenna', 'Lat', 'Long', 'Species', 'Length', 'Marked At', 'Week',
-                 'D1', 'U1', 'U2', 'U3'],
+fish_data.to_csv('./processed_data.csv', header=['D', 'Date', 'Time', 'Tag ID', 'Antenna', 'Species', 'Length', 'Marked At'],
                  index=False)
 
 print(fish_data.sample(n=10))
