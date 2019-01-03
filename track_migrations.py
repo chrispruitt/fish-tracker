@@ -107,7 +107,6 @@ def main():
 
 main()
 
-
 end_timer = datetime.now()
 duration = end_timer - start_timer
 duration = divmod(duration.total_seconds(), 60)
