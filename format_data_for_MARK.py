@@ -1,16 +1,23 @@
 import pandas as pd, csv
 from datetime import datetime, timedelta
+import argparse
 
 ###########################################################################################
 """
 Description:
-This Script is used to cleanse the data from the master tag list.
+This Script is used to create a file formated for the program MARK
 """
 
 # PARAMETERS
-start_datetime = datetime(year=2018, month=7, day=3, hour=3)
-end_datetime = datetime(year=2018, month=9, day=24, hour=23, minute=59)
-interval_hours = 6
+parser = argparse.ArgumentParser()
+parser.add_argument("-s", "--start_date", help="start date to start matching detections. Example: 2018-09-19")
+parser.add_argument("-e", "--end_date", help="end date to stop matching detection. Example: 2018-09-19")
+parser.add_argument("-sh", "--start_hour", help="hour of the day to start matching detection times", default=3, type=int)
+parser.add_argument("-i", "--interval", help="interval in hours to match detections times", default=6, type=int)
+args = parser.parse_args()
+start_datetime = datetime.strptime(args.start_date, '%Y-%m-%d') + timedelta(hours=args.start_hour)
+end_datetime = datetime.strptime(args.end_date, '%Y-%m-%d') + timedelta(hours=23, minutes=59, seconds=59)
+interval_hours = args.interval
 
 # PATHS:
 optimal_dates_path = './data/optimal_dates.csv'  # only the dates in this file will be used to record data. all other dates will be skipped.

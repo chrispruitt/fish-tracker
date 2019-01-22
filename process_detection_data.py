@@ -1,6 +1,8 @@
 import pandas as pd
 import os
 from datetime import datetime, timedelta
+import argparse
+
 ###########################################################################################
 """
 Description:
@@ -8,12 +10,16 @@ This Script is used to cleanse data for antenna detections.
 """
 
 # PARAMETERS:
-start_hour = 3  # hour of the day to start rounding detection times
-interval = 6  # interval in which to round detection times
+parser = argparse.ArgumentParser()
+parser.add_argument("-sh", "--start_hour", help="hour of the day to start rounding detection times", type=int, default=0)
+parser.add_argument("-i", "--interval", help="interval in which to round detection times", type=int, default=1)
+args = parser.parse_args()
+start_hour = args.start_hour
+interval = args.interval
 
 # PATHS:
-data_directory = './data/antenna_data/'
-# data_directory = './data/test_data/'
+# data_directory = './data/antenna_data/'
+data_directory = './data/test_data/'
 tag_data_path = './data/tag_data.csv'
 destination_csv_name = './results/cleansed_detection_data.csv'
 
@@ -29,7 +35,7 @@ def get_file_directories(data_directory):
 def create_time_rounding_list(start_hour, interval):
     time_rounding_list = []
     print('Detection times will be rounded to the nearest time of day in the following list:')
-    while start_hour <= 24:
+    while start_hour <= 23:
         td = timedelta(hours=start_hour)
         print(td)
         time_rounding_list.append(pd.to_timedelta(str(timedelta(hours=start_hour))))
