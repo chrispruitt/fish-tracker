@@ -29,6 +29,10 @@ destination_csv_name = './results/mark.txt'
 
 start_timer = datetime.now()
 
+# If error on write, toggle this. I know its stupid, but don't have time to explain.
+# quoting = csv.QUOTE_NONE
+# quoting = csv.QUOTE_MINIMAL
+
 
 def main():
     master_list_df = pd.read_csv(tag_data_path,
@@ -101,6 +105,7 @@ def main():
     master_list_df = master_list_df[['Col_1', 'Tag ID', 'Col_3', 'Encounter History', 'Col_5']]
 
     print(master_list_df.sample(n=1))
+
 
     master_list_df.to_csv(destination_csv_name,
                           sep=' ',

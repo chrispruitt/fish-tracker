@@ -18,8 +18,8 @@ start_hour = args.start_hour
 interval = args.interval
 
 # PATHS:
-# data_directory = './data/antenna_data/'
-data_directory = './data/test_data/'
+data_directory = './data/antenna_data/'
+# data_directory = './data/test_data/'
 tag_data_path = './data/tag_data.csv'
 destination_csv_name = './results/cleansed_detection_data.csv'
 

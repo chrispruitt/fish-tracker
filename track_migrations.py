@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 from datetime import datetime
+import sys
 ###########################################################################################
 """
 Description:
@@ -16,19 +17,43 @@ destination_csv_name = './results/migrations.csv'
 
 start_timer = datetime.now()
 
+migration_columns = ['tag_id',
+           'prev_loc',
+           'prev_loc_first_date',
+           'prev_loc_first_time',
+           'prev_loc_last_date',
+           'prev_loc_last_time',
+           'new_loc',
+           'new_loc_first_date',
+           'new_loc_first_time',
+           'new_loc_last_date',
+           'new_loc_last_time']
 
-def get_location(loc_pd, tag_id):
-    df = loc_pd.loc[loc_pd['tag_id'] == tag_id].to_dict(orient='records')
+
+def get_location(loc_df, tag_id):
+    df = loc_df.loc[loc_df['tag_id'] == tag_id].to_dict(orient='records')
     if df is not None and df != []:
         return df[0]
     else:
         return None
 
 
-def update_current_location(loc_pd, tag_id, antenna, date, time):
-    loc_pd.loc[loc_pd['tag_id'] == tag_id, 'antenna'] = antenna
-    loc_pd.loc[loc_pd['tag_id'] == tag_id, 'date'] = date
-    loc_pd.loc[loc_pd['tag_id'] == tag_id, 'time'] = time
+def update_datetime(loc_df, tag_id, date, time):
+    loc_df.loc[loc_df['tag_id'] == tag_id, 'date'] = date
+    loc_df.loc[loc_df['tag_id'] == tag_id, 'time'] = time
+
+
+def update_location_datetime(loc_df, tag_id, antenna, date, time):
+    loc_df.loc[loc_df['tag_id'] == tag_id, 'antenna'] = antenna
+    loc_df.loc[loc_df['tag_id'] == tag_id, 'first_date'] = date
+    loc_df.loc[loc_df['tag_id'] == tag_id, 'first_time'] = time
+    loc_df.loc[loc_df['tag_id'] == tag_id, 'date'] = date
+    loc_df.loc[loc_df['tag_id'] == tag_id, 'time'] = time
+
+
+def update_last_detection_datetime(migrations_df, tag_id, date, time):
+    migrations_df.loc[(migrations_df['tag_id'] == tag_id) & (migrations_df['new_loc_last_date'].isnull()), 'new_loc_last_date'] = date
+    migrations_df.loc[(migrations_df['tag_id'] == tag_id) & (migrations_df['new_loc_last_time'].isnull()), 'new_loc_last_time'] = time
 
 
 def main():
@@ -38,21 +63,25 @@ def main():
 
     master_list_df = pd.read_csv(tag_data_path,
                                  names=['Date', 'Time', 'Tag ID', 'Species', 'Length', 'Capture Method', 'Marked At'],
-                                 low_memory=False)
+                                 low_memory=False,
+                                 header=0)
 
     detection_df = pd.read_csv(processed_data_path,
                                names=['D', 'Date', 'Time', 'Tag ID', 'Antenna', 'Species', 'Length', 'Marked At'],
-                               low_memory=False)
+                               low_memory=False,
+                               header=0)
 
     master_fish_array = []
     ignored_rows = 0
     for index, row in master_list_df.iterrows():
         try:
             master_fish_array.append({
-                'tag_id': row[2],
-                'antenna': row[6],
-                'date': row[0],
-                'time': row[1]
+                'tag_id': row["Tag ID"],
+                'antenna': row["Marked At"],
+                'first_date': row["Date"],
+                'first_time': row["Time"],
+                'date': row["Date"],
+                'time': row["Time"]
             })
 
         except Exception as e:
@@ -60,34 +89,41 @@ def main():
             ignored_rows += 1
             print(e)
 
-    loc_pd = pd.DataFrame.from_dict(master_fish_array, orient='columns')
+    loc_df = pd.DataFrame.from_dict(master_fish_array, orient='columns')
 
-    columns = ['tag_id', 'prev_loc', 'prev_loc_date', 'prev_loc_time', 'new_loc', 'new_loc_date', 'new_loc_time']
-    migrations_df = pd.DataFrame(columns=columns)
+    migrations_df = pd.DataFrame(columns=migration_columns)
 
     for index, row in detection_df.iterrows():
         try:
-            tag_id = row[5]
-            date = row[1]
-            time = row[2]
-            antenna = row[8]
-            current_location = get_location(loc_pd, row[5])
+            tag_id = row["Tag ID"]
+            date = row["Date"]
+            time = row["Time"]
+            antenna = row["Antenna"]
+
+            current_location = get_location(loc_df, tag_id)
             if current_location is not None:
                 if antenna != current_location['antenna']:
+                    last_date = current_location['date']
+                    last_time = current_location['time']
                     dict = {
                         'tag_id': tag_id,
                         'prev_loc': current_location['antenna'],
-                        'prev_loc_date': current_location['date'],
-                        'prev_loc_time': current_location['time'],
+                        'prev_loc_first_date': current_location['first_date'],
+                        'prev_loc_first_time': current_location['first_time'],
+                        'prev_loc_last_date': current_location['date'],
+                        'prev_loc_last_time': current_location['time'],
                         'new_loc': antenna,
-                        'new_loc_date': date,
-                        'new_loc_time': time
+                        'new_loc_first_date': date,
+                        'new_loc_first_time': time
                     }
-                    print(dict)
+
+                    update_last_detection_datetime(migrations_df, tag_id, last_date, last_time)
 
                     migrations_df = migrations_df.append(dict, ignore_index=True)
 
-                update_current_location(loc_pd, tag_id, antenna, date, time)
+                    update_location_datetime(loc_df, tag_id, antenna, date, time)
+                else:
+                    update_datetime(loc_df, tag_id, date, time)
 
             else:
                 print('Tag with id: %s does not exist in master list.' % tag_id)
@@ -95,14 +131,20 @@ def main():
         except Exception as e:
             print(e)
 
+    for index, row in loc_df.iterrows():
+        tag_id = row["tag_id"]
+        last_date = loc_df.loc[loc_df['tag_id'] == tag_id, "date"].values[0]
+        last_time = loc_df.loc[loc_df['tag_id'] == tag_id, "time"].values[0]
+        update_last_detection_datetime(migrations_df, tag_id, last_date, last_time)
+
     print(migrations_df.sample(n=2))
 
     migrations_df.to_csv(destination_csv_name,
-                         header=['tag_id', 'prev_loc', 'prev_loc_date', 'prev_loc_time',
-                                 'new_loc', 'new_loc_date', 'new_loc_time'],
+                         header=migration_columns,
                          index=False)
 
     print('Ignored %s rows' % ignored_rows)
+    sys.exit(0)
 
 
 main()
