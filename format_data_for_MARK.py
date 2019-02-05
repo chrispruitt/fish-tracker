@@ -99,7 +99,7 @@ def main():
 
     master_list_df = master_list_df.drop(axis='columns', columns=['Date', 'Time', 'Species', 'Length', 'Capture Method', 'Marked At'])
     master_list_df['Col_1'] = '/*'
-    master_list_df['Col_3'] = '/*'
+    master_list_df['Col_3'] = '*/'
     master_list_df['Col_5'] = '1;'
 
     master_list_df = master_list_df[['Col_1', 'Tag ID', 'Col_3', 'Encounter History', 'Col_5']]
