@@ -48,7 +48,7 @@ def main():
                                names=['D', 'Date', 'Time', 'Tag ID', 'Antenna', 'Species', 'Length', 'Marked At'],
                                low_memory=False)
 
-    # TODO: mark first encounter when captured
+    # TODO: mark first encounter when captured (maybe?)
 
     master_list_df['Encounter History'] = ''
 
