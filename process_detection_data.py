@@ -64,8 +64,8 @@ def time_diff(x, y):
         return y - x
 
 
-def main():
-    global start_hour, interval, data_directory, tag_data_path, destination_csv_name
+def main(start_hour, interval):
+    global data_directory, tag_data_path, destination_csv_name
 
     time_rounding_list = create_time_rounding_list(start_hour, interval)
     file_directories = get_file_directories(data_directory)
@@ -158,7 +158,7 @@ def main():
     print('Error processing %s records' % processing_error_count)
 
 
-main()
+main(start_hour, interval)
 
 end_timer = datetime.now()
 duration = end_timer - start_timer

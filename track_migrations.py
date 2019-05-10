@@ -18,16 +18,18 @@ destination_csv_name = './results/migrations.csv'
 start_timer = datetime.now()
 
 migration_columns = ['tag_id',
-           'prev_loc',
-           'prev_loc_first_date',
-           'prev_loc_first_time',
-           'prev_loc_last_date',
-           'prev_loc_last_time',
-           'new_loc',
-           'new_loc_first_date',
-           'new_loc_first_time',
-           'new_loc_last_date',
-           'new_loc_last_time']
+                     'prev_loc',
+                     'prev_loc_first_date',
+                     'prev_loc_first_time',
+                     'prev_loc_last_date',
+                     'prev_loc_last_time',
+                     'new_loc',
+                     'new_loc_first_date',
+                     'new_loc_first_time',
+                     'new_loc_last_date',
+                     'new_loc_last_time',
+                     'species',
+                     'length']
 
 
 def get_location(loc_df, tag_id):
@@ -81,7 +83,9 @@ def main():
                 'first_date': row["Date"],
                 'first_time': row["Time"],
                 'date': row["Date"],
-                'time': row["Time"]
+                'time': row["Time"],
+                'species': row["Species"],
+                'length': row["Length"]
             })
 
         except Exception as e:
@@ -92,6 +96,9 @@ def main():
     loc_df = pd.DataFrame.from_dict(master_fish_array, orient='columns')
 
     migrations_df = pd.DataFrame(columns=migration_columns)
+
+#D,Date,Time,Tag ID,Antenna,Species,Length,Marked At
+#D,2018-04-17,12:00:00,3D6.00184CBA4E,U1,LEAU,99,U1.0
 
     for index, row in detection_df.iterrows():
         try:
@@ -114,7 +121,9 @@ def main():
                         'prev_loc_last_time': current_location['time'],
                         'new_loc': antenna,
                         'new_loc_first_date': date,
-                        'new_loc_first_time': time
+                        'new_loc_first_time': time,
+                        'species': current_location['species'],
+                        'length': current_location['length']
                     }
 
                     update_last_detection_datetime(migrations_df, tag_id, last_date, last_time)

@@ -21,13 +21,13 @@ column_names = ['Date', 'Time', 'Tag ID', 'Species', 'Length', 'Capture Method',
 
 
 def read_time_to_timedelta(time_string):
-    return pd.to_timedelta(time_string)
-    # time = time_string.split(':')
-    # hours = int(time[0])
-    # minutes = int(time[1].split()[0])
-    # if time[1].split()[1] == 'PM' and hours != 12:
-    #     hours += 12
-    # return timedelta(hours=hours, minutes=minutes)
+    # return pd.to_timedelta(time_string)
+    time = time_string.split(':')
+    hours = int(time[0])
+    minutes = int(time[1].split()[0])
+    if time[1].split()[1] == 'PM' and hours != 12:
+        hours += 12
+    return timedelta(hours=hours, minutes=minutes)
 
 
 def main():
