@@ -54,16 +54,13 @@ def main():
 
     current_datetime = start_datetime
     while current_datetime <= end_datetime:
-        if not optimal_dates_df.loc[(optimal_dates_df['Date'] == current_datetime.strftime('%Y-%m-%d'))].empty:
+        # if not optimal_dates_df.loc[(optimal_dates_df['Date'] == current_datetime.strftime('%Y-%m-%d'))].empty:
 
-            for index, row in master_list_df.iterrows():
-                try:
-                    tag_id = row[2]
-                    marked_datetime = datetime.strptime(row[0], '%Y-%m-%d') + pd.to_timedelta(row[1])
-                    marked_at_antenna = row[6]
-                except Exception as e:
-                    print('Error processing row:', row)
-                    print(e)
+        for index, row in master_list_df.iterrows():
+            try:
+                tag_id = row[2]
+                marked_datetime = datetime.strptime(row[0], '%Y-%m-%d') + pd.to_timedelta(row[1])
+                marked_at_antenna = row[6]
                 if current_datetime >= marked_datetime:
                     result = detection_df.loc[(detection_df['Tag ID'] == tag_id) & (detection_df['Date'] == current_datetime.strftime('%Y-%m-%d')) & (detection_df['Time'] == current_datetime.strftime('%H:%M:%S'))]
                     if result.empty:
@@ -92,10 +89,13 @@ def main():
                 else:
                     master_list_df.at[index, 'Encounter History'] = row[7] + '.'
 
-            current_datetime = current_datetime + timedelta(hours=interval_hours)
-        else:
-            print('Skipping Date:', current_datetime.strftime('%Y-%m-%d'))
-            current_datetime = current_datetime + timedelta(days=1)
+            except Exception as e:
+                print('Error processing row:', row)
+                print(e)
+        current_datetime = current_datetime + timedelta(hours=interval_hours)
+        # else:
+        #     print('Skipping Date:', current_datetime.strftime('%Y-%m-%d'))
+        #     current_datetime = current_datetime + timedelta(days=1)
 
     master_list_df = master_list_df.drop(axis='columns', columns=['Date', 'Time', 'Species', 'Length', 'Capture Method', 'Marked At'])
     master_list_df['Col_1'] = '/*'

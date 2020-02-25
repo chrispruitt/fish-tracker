@@ -107,35 +107,37 @@ def main():
             time = row["Time"]
             antenna = row["Antenna"]
 
-            current_location = get_location(loc_df, tag_id)
-            if current_location is not None:
-                if antenna != current_location['antenna']:
-                    last_date = current_location['date']
-                    last_time = current_location['time']
-                    dict = {
-                        'tag_id': tag_id,
-                        'prev_loc': current_location['antenna'],
-                        'prev_loc_first_date': current_location['first_date'],
-                        'prev_loc_first_time': current_location['first_time'],
-                        'prev_loc_last_date': current_location['date'],
-                        'prev_loc_last_time': current_location['time'],
-                        'new_loc': antenna,
-                        'new_loc_first_date': date,
-                        'new_loc_first_time': time,
-                        'species': current_location['species'],
-                        'length': current_location['length']
-                    }
+            # print(date)
+            # TODO: Make an argument to start migrations from date.
+            if datetime.strptime(date, '%Y-%m-%d') >= datetime.strptime('2018-07-01', '%Y-%m-%d'):
+                current_location = get_location(loc_df, tag_id)
+                if current_location is not None:
+                    if antenna != current_location['antenna']:
+                        last_date = current_location['date']
+                        last_time = current_location['time']
+                        dict = {
+                            'tag_id': tag_id,
+                            'prev_loc': current_location['antenna'],
+                            'prev_loc_first_date': current_location['first_date'],
+                            'prev_loc_first_time': current_location['first_time'],
+                            'prev_loc_last_date': current_location['date'],
+                            'prev_loc_last_time': current_location['time'],
+                            'new_loc': antenna,
+                            'new_loc_first_date': date,
+                            'new_loc_first_time': time,
+                            'species': current_location['species'],
+                            'length': current_location['length']
+                        }
 
-                    update_last_detection_datetime(migrations_df, tag_id, last_date, last_time)
+                        update_last_detection_datetime(migrations_df, tag_id, last_date, last_time)
 
-                    migrations_df = migrations_df.append(dict, ignore_index=True)
+                        migrations_df = migrations_df.append(dict, ignore_index=True)
 
-                    update_location_datetime(loc_df, tag_id, antenna, date, time)
+                        update_location_datetime(loc_df, tag_id, antenna, date, time)
+                    else:
+                        update_datetime(loc_df, tag_id, date, time)
                 else:
-                    update_datetime(loc_df, tag_id, date, time)
-
-            else:
-                print('Tag with id: %s does not exist in master list.' % tag_id)
+                    print('Tag with id: %s does not exist in master list.' % tag_id)
 
         except Exception as e:
             print(e)

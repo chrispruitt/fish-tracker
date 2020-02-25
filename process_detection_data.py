@@ -64,6 +64,36 @@ def time_diff(x, y):
         return y - x
 
 
+def get_detections_from_master_list_file():
+    master_list_df = pd.read_csv(tag_data_path,
+                                 names=['Date', 'Time', 'Tag ID', 'Species', 'Length', 'Capture Method', 'Marked At'],
+                                 header=0,
+                                 low_memory=False)
+
+    detections = []
+    for index, row in master_list_df.iterrows():
+        detections.append({
+            'D': 'D',
+            'Date': datetime.strptime(row['Date'], '%m/%d/%Y').strftime('%Y-%m-%d'),
+            'Time': '00:00:00',
+            'Tag ID': row['Tag ID'],
+            'Antenna': str(row['Marked At'].strip())[:2]
+        })
+
+    return detections
+    # return pd.DataFrame.from_dict(detections, orient='columns')
+
+# Detection Data
+# D,Date,Time,Tag ID,Antenna,Species,Length,Marked At
+# D,2018-04-16,00:00:00,3D6.00184CBA4E,U1,LEAU,99,U1.0
+
+# 2372
+
+# Master List
+# Date,Time,Tag ID,Species,Length,Capture Method,Marked At
+# 2017-07-14,11:00:00,3D6.00184CE0C9,HYET,98,Fyke,D1
+
+
 def main(start_hour, interval):
     global data_directory, tag_data_path, destination_csv_name
 
@@ -95,11 +125,14 @@ def main(start_hour, interval):
                                 row = line.split()
                                 try:
                                     # check each column for validation
-                                    datetime.strptime(row[1], '%Y-%m-%d')
+                                    dt = datetime.strptime(row[1], '%Y-%m-%d')
+                                    # row[1] = dt - timedelta(days=dt.weekday())
 
                                     # Round tag_time to nearest time in list
                                     time_of_day = str(pd.to_timedelta(row[2]).round('H'))
                                     row[2] = str(round_to_nearest_time_in_list(pd.to_timedelta(time_of_day), time_rounding_list))[7:]
+                                    # row[2] = "00:00:00"
+
                                     pd.to_timedelta(row[3])
                                     float(row[6])
 
@@ -129,6 +162,25 @@ def main(start_hour, interval):
 
     print('\nDeduplicating records...')
     # Deduplicate by hour
+
+
+    # Add initial detections from Marked At data in master list
+    #initial_detections = pd.DataFrame.from_dict(get_detections_from_master_list_file())
+    #print(initial_detections.sample(n=1))
+    #print(fish_data.sample(n=1))
+    #ifish_data = fish_data.append(initial_detections)
+    # # print(initial_detections.sample(n=10))
+    #
+    # fish_array = fish_data.to_dict(orient="records")
+    # print(fish_array[0])
+    # print(initial_detections[0])
+    # fish_array.append(initial_detections)
+    # # frames = [initial_detections, fish_data]
+    # # fish_data = pd.concat(frames)
+    # # print(fish_array)
+    # fish_data = pd.DataFrame.from_dict(fish_array)
+
+    # Drop duplicate detections
     fish_data = fish_data.drop_duplicates(subset=['Tag ID', 'Date', 'Time', 'Antenna'])
 
     print('Merging species data...')

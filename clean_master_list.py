@@ -21,13 +21,13 @@ column_names = ['Date', 'Time', 'Tag ID', 'Species', 'Length', 'Capture Method',
 
 
 def read_time_to_timedelta(time_string):
-    # return pd.to_timedelta(time_string)
-    time = time_string.split(':')
-    hours = int(time[0])
-    minutes = int(time[1].split()[0])
-    if time[1].split()[1] == 'PM' and hours != 12:
-        hours += 12
-    return timedelta(hours=hours, minutes=minutes)
+    return pd.to_timedelta(time_string)
+    # time = time_string.split(':')
+    # hours = int(time[0])
+    # minutes = int(time[1].split()[0])
+    # if time[1].split()[1] == 'PM' and hours != 12:
+    #     hours += 12
+    # return timedelta(hours=hours, minutes=minutes)
 
 
 def main():
@@ -46,11 +46,11 @@ def main():
         try:
 
             # Validate time format
-            read_time_to_timedelta(row[1])
+            row[1] = str(read_time_to_timedelta(row[1]))[7:]
 
             master_fish_array.append({
                 'Date': datetime.strptime(row[0], '%m/%d/%Y').strftime('%Y-%m-%d'),
-                'Time': row[1].strip(),
+                'Time': row[1],
                 'Tag ID': row[2].strip(),
                 'Species': row[3].strip(),
                 'Length': row[4],
